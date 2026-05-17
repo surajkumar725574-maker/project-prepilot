@@ -6,11 +6,13 @@
   console.log(chatHistory);
   alert("Chat history is printed in console. Press F12 → Console to view it.");
 }
+if(document.getElementById("chatInput")){
     document.getElementById("chatInput").addEventListener("keydown", function(event) {
   if (event.key === "Enter") {
     sendMessage();
   }
 });
+}
     function sendMessage() {
   const input = document.getElementById("chatInput");
   const chatBox = document.getElementById("chatBox");
@@ -50,30 +52,7 @@ setTimeout(() => {
 }, 1000);
   let botReply = "";
 
-  if (userText.includes("coa")) {
-    botReply = "COA important topics are pipelining, cache memory, DMA, interrupts, and instruction cycle.";
-  }
-
-  else if (userText.includes("java")) {
-    botReply = "Java important topics are OOP, exception handling, multithreading, AWT, and applets.";
-  }
-
-  else if (userText.includes("fla") || userText.includes("automata")) {
-    botReply = "FLA topics include DFA, NFA, regular expressions, CFG, PDA, and Turing Machine.";
-  }
-
-  else if (userText.includes("cyber")) {
-    botReply = "Cybersecurity topics include malware, phishing, ransomware, cyber forensics, and network security.";
-  }
-
-  else if (userText.includes("plan")) {
-    botReply = "Use this plan: Day 1 basics, Day 2 important questions, Day 3 revision and viva practice.";
-  }
-
-  else if (userText.includes("viva")) {
-    botReply = "For viva, prepare short definitions, examples, and differences between related concepts.";
-  }
-   else if(userText.includes("dma")){
+   if(userText.includes("dma")){
     botReply = `
 DMA stands for Direct Memory Access.
 
@@ -113,6 +92,30 @@ Three hazards are structural, data, and control hazards.
 `;
 
 }
+  if (userText.includes("coa")) {
+    botReply = "COA important topics are pipelining, cache memory, DMA, interrupts, and instruction cycle.";
+  }
+
+  else if (userText.includes("java")) {
+    botReply = "Java important topics are OOP, exception handling, multithreading, AWT, and applets.";
+  }
+
+  else if (userText.includes("fla") || userText.includes("automata")) {
+    botReply = "FLA topics include DFA, NFA, regular expressions, CFG, PDA, and Turing Machine.";
+  }
+
+  else if (userText.includes("cyber")) {
+    botReply = "Cybersecurity topics include malware, phishing, ransomware, cyber forensics, and network security.";
+  }
+
+  else if (userText.includes("plan")) {
+    botReply = "Use this plan: Day 1 basics, Day 2 important questions, Day 3 revision and viva practice.";
+  }
+
+  else if (userText.includes("viva")) {
+    botReply = "For viva, prepare short definitions, examples, and differences between related concepts.";
+  }
+   
   else {
     botReply = "I can help with COA, Java, FLA, Cybersecurity, study plans, and viva questions.";
   }
@@ -137,29 +140,61 @@ Three hazards are structural, data, and control hazards.
 
   link.click();
 }
-    function toggleTheme(){
+   
+function toggleTheme(){
 
    document.body.classList.toggle("light-mode");
 
+   if(document.body.classList.contains("light-mode")){
+
+      localStorage.setItem("theme", "light");
+
+   }
+
+   else{
+
+      localStorage.setItem("theme", "dark");
+
+   }
+
 }
-    function updateTaskProgress() {
-  const tasks = document.querySelectorAll("input[type='checkbox']");
+    
+
+function attachTaskListeners() {
+  const taskList = document.getElementById("taskList");
+  if (!taskList) return;
+
+  const tasks = taskList.querySelectorAll("input[type='checkbox']");
+
+  tasks.forEach((task) => {
+    task.onchange = updateTaskProgress;
+  });
+}
+
+function updateTaskProgress() {
+  const taskList = document.getElementById("taskList");
+  const progressText = document.getElementById("progressText");
+  const progressFill = document.getElementById("progressFill");
+  const taskStatus = document.getElementById("taskStatus");
+
+  if (!taskList || !progressText || !progressFill || !taskStatus) return;
+
+  const tasks = taskList.querySelectorAll("input[type='checkbox']");
   let completed = 0;
 
   tasks.forEach((task) => {
-    if (task.checked) {
-      completed++;
-    }
+    if (task.checked) completed++;
   });
 
-  document.getElementById("taskStatus").innerText =
-    `${completed} out of ${tasks.length} tasks completed`;
+  const percentage =
+    tasks.length === 0 ? 0 : Math.round((completed / tasks.length) * 100);
 
-  progress = completed * 25;
-
-  document.getElementById("progressText").innerText = `Progress: ${progress}%`;
-  document.getElementById("progressFill").style.width = progress + "%";
+  taskStatus.innerText = `${completed} out of ${tasks.length} tasks completed`;
+  progressText.innerText = `Progress: ${percentage}%`;
+  progressFill.style.width = percentage + "%";
+  saveTasks();
 }
+
     const quotes = [
 
   "Discipline beats motivation.",
@@ -175,29 +210,84 @@ Three hazards are structural, data, and control hazards.
   "Pressure creates diamonds."
 
 ];
-
 function generateQuote(){
+
+   const quoteBox = document.getElementById("quoteText");
+
+   if(!quoteBox){
+      return;
+   }
 
    const randomIndex =
       Math.floor(Math.random() * quotes.length);
 
-   document.getElementById("quoteText").innerText =
-      quotes[randomIndex];
+   quoteBox.innerText = quotes[randomIndex];
+}
+function addTask() {
+  const taskInput = document.getElementById("taskInput");
+  const taskList = document.getElementById("taskList");
+
+  if (!taskInput || !taskList) {
+    return;
+  }
+
+  const taskText = taskInput.value.trim();
+
+  if (taskText === "") {
+    return;
+  }
+
+  taskList.innerHTML += `
+    <label>
+      <input type="checkbox" onchange="updateTaskProgress()"> ${taskText}
+    </label><br>
+  `;
+
+  taskInput.value = "";
+    attachTaskListeners();
+  updateTaskProgress();
+  saveTasks();
+}
+function saveTasks() {
+
+  const taskList = document.getElementById("taskList");
+
+  if(!taskList){
+    return;
+  }
+
+  localStorage.setItem(
+    "tasks",
+    taskList.innerHTML
+  );
 
 }
-    let progress = 0;
+
+ let progress = 0;
 
 function increaseProgress() {
+  const progressText = document.getElementById("progressText");
+  const progressFill = document.getElementById("progressFill");
+
+  if(!progressText || !progressFill){
+    return;
+  }
+
   if (progress < 100) {
     progress += 20;
   }
 
-  document.getElementById("progressText").innerText = `Progress: ${progress}%`;
-  document.getElementById("progressFill").style.width = progress + "%";
-  document.getElementById("progressFill").style.background = "orange";
+  progressText.innerText = `Progress: ${progress}%`;
+  progressFill.style.width = progress + "%";
+  progressFill.style.background = "orange";
 }
     function typeText(text) {
   const output = document.getElementById("output");
+
+  if(!output){
+    return;
+  }
+
   output.innerText = "";
 
   let index = 0;
@@ -426,3 +516,19 @@ else if(level === "advanced"){
         output.innerHTML=result;
       },2000);
     }
+    if(document.getElementById("quoteText")){
+   generateQuote();
+}
+
+if(localStorage.getItem("theme") === "light"){
+   document.body.classList.add("light-mode");
+}
+
+if(localStorage.getItem("tasks")){
+
+   document.getElementById("taskList").innerHTML =
+      localStorage.getItem("tasks");
+
+}
+attachTaskListeners();
+updateTaskProgress();

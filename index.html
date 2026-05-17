@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PrepPilot - Smart Study Assistant</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="./pages/assistant.html">AI Assistant</a>
+    <a href="./pages/generator.html">Study Generator</a>
+  </div>
+
+  <button onclick="toggleTheme()">Toggle Theme</button>
+
+  <p id="quoteText" class="floating-quote">Loading motivation...</p>
+
+  <div class="container">
+
+    <h1>PrepPilot AI</h1>
+    <p>Your Smart Engineering Exam Assistant</p>
+
+    <div class="card">
+      <h2>Study Progress</h2>
+
+      <p id="progressText">Progress: 0%</p>
+
+      <div class="progressBox">
+        <div id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Today's Study Tasks</h2>
+
+      <input id="taskInput" placeholder="Enter your task">
+      <button onclick="addTask()">Add Task</button>
+
+      <div id="taskList">
+        <label><input type="checkbox"> Revise important topics</label><br>
+        <label><input type="checkbox"> Practice probable questions</label><br>
+        <label><input type="checkbox"> Attempt viva questions</label><br>
+        <label><input type="checkbox"> Complete one focus session</label><br>
+      </div>
+
+      <p id="taskStatus">0 out of 4 tasks completed</p>
+    </div>
+
+  </div>
+
+  <script src="project-1.js"></script>
+</body>
+</html>
